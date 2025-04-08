@@ -8,86 +8,49 @@ const TeachableModel = ({ onResultsUpdate }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const rafIdRef = useRef(null);
-  const frameSkip = 2;
+  
+  // Default performance setting - using a moderate frame skip value
+  const frameSkip = 2; 
   const frameCount = useRef(0);
   const modelURL = "https://teachablemachine.withgoogle.com/models/I4POmI6M5/";
-
+  
   useEffect(() => {
     async function setupModel() {
       try {
-        // Load the model
+        // Load the model first
         const modelURLPath = modelURL + "model.json";
         const metadataURL = modelURL + "metadata.json";
         console.log("Loading model...");
         const model = await tmImage.load(modelURLPath, metadataURL);
         modelRef.current = model;
         console.log("Model loaded successfully");
-
-        // Define camera constraints for back camera
-        const constraints = {
-          video: {
-            width: { ideal: 640 },
-            height: { ideal: 480 },
-            facingMode: 'environment' // Explicitly request back camera
-          }
-        };
-
-        // Get media stream with back camera
-        console.log("Requesting back camera...");
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        console.log("Media stream obtained:", stream.getVideoTracks()[0].label);
-
-        // Initialize Teachable Machine Webcam with the stream
-        const webcam = new tmImage.Webcam(640, 480, true); // flip = true
+        
+        // Setup webcam
+        const flip = true;
+        const webcam = new tmImage.Webcam(640, 480, flip);
         webcamObjRef.current = webcam;
-
-        // Manually set the stream
-        await webcam.setup({ stream });
-        console.log("Webcam setup with stream complete");
-
-        // Start the webcam
+        
+        // Setup camera
+        await webcam.setup();
+        console.log("Webcam setup complete");
         await webcam.play();
         console.log("Webcam started playing");
-
-        // Append webcam canvas
+        
+        // Only append the webcam canvas once we know it's properly setup
         if (webcamRef.current) {
+          // Make sure container is empty
           webcamRef.current.innerHTML = '';
           webcamRef.current.appendChild(webcam.canvas);
+          
+          // Style the canvas
           webcam.canvas.style.width = '100%';
           webcam.canvas.style.height = '100%';
           webcam.canvas.style.objectFit = 'cover';
         }
-
+        
         setIsLoading(false);
-
-        // Define and start prediction loop
-        async function predict() {
-          if (webcamObjRef.current) {
-            webcamObjRef.current.update(); // Update the frame
-          }
-
-          frameCount.current = (frameCount.current + 1) % frameSkip;
-
-          if (frameCount.current === 0 && modelRef.current && webcamObjRef.current) {
-            try {
-              const predictions = await modelRef.current.predict(webcamObjRef.current.canvas);
-              if (onResultsUpdate) {
-                const formattedResults = predictions.map(p => ({
-                  className: p.className,
-                  probability: p.probability
-                }));
-                onResultsUpdate(formattedResults);
-              }
-            } catch (err) {
-              console.error("Prediction error:", err);
-            }
-          }
-
-          rafIdRef.current = requestAnimationFrame(predict);
-        }
-
         predict();
-
+        
       } catch (err) {
         console.error("Error in setup:", err);
         if (err.name === 'NotAllowedError') {
@@ -100,10 +63,10 @@ const TeachableModel = ({ onResultsUpdate }) => {
         setIsLoading(false);
       }
     }
-
+    
     setupModel();
-
-    // Cleanup
+    
+    // Cleanup function
     return () => {
       console.log("Cleaning up TeachableModel");
       if (webcamObjRef.current) {
@@ -113,8 +76,38 @@ const TeachableModel = ({ onResultsUpdate }) => {
         cancelAnimationFrame(rafIdRef.current);
       }
     };
-  }, [onResultsUpdate]);
-
+  }, []);
+  
+  const predict = async () => {
+    // Update the webcam frame
+    if (webcamObjRef.current) {
+      webcamObjRef.current.update();
+    }
+    
+    // Only run prediction on some frames to balance performance
+    frameCount.current = (frameCount.current + 1) % frameSkip;
+    
+    if (frameCount.current === 0 && modelRef.current && webcamObjRef.current) {
+      try {
+        const predictions = await modelRef.current.predict(webcamObjRef.current.canvas);
+        
+        // Send prediction results to parent
+        if (onResultsUpdate) {
+          const formattedResults = predictions.map(p => ({
+            className: p.className,
+            probability: p.probability
+          }));
+          onResultsUpdate(formattedResults);
+        }
+      } catch (err) {
+        console.error("Prediction error:", err);
+      }
+    }
+    
+    // Continue loop
+    rafIdRef.current = requestAnimationFrame(predict);
+  };
+  
   return (
     <div className="w-full h-full bg-black relative">
       {isLoading && (
@@ -131,7 +124,10 @@ const TeachableModel = ({ onResultsUpdate }) => {
           </div>
         </div>
       )}
-      <div ref={webcamRef} className="webcam-container w-full h-full" />
+      <div 
+        ref={webcamRef} 
+        className="webcam-container w-full h-full"
+      />
     </div>
   );
 };
