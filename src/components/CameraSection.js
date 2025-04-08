@@ -38,7 +38,7 @@ export default function CameraSection() {
   };
 
   return (
-    <div className="py-16 bg-gray-50">
+    <div id="camera" className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900">Experience AI Classification</h2>
@@ -64,7 +64,7 @@ export default function CameraSection() {
                     Activate Camera
                   </button>
                   <div className="text-sm text-gray-500">
-                    <p>Note: This feature may cause high CPU usage on some devices.</p>
+                    <p>Note: This feature may cause high CPU usage on some devices</p>
                   </div>
                 </div>
               </div>
@@ -90,13 +90,7 @@ export default function CameraSection() {
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-lg">Live Results</h3>
                     <div className="flex space-x-2">
-                      <button 
-                        onClick={resetClassification}
-                        className="text-sm flex items-center text-gray-600 hover:text-gray-900"
-                      >
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Reset
-                      </button>
+                      
                     </div>
                   </div>
                   
@@ -144,7 +138,7 @@ export default function CameraSection() {
                   <div className="mt-6 pt-4 border-t">
                     <h4 className="font-medium text-sm text-gray-600 mb-2">Performance Tips</h4>
                     <p className="text-xs text-gray-500">
-                      Click "Reset" to restart the model if you experience performance issues.
+                      Use a plain background for higher accuracy, avoid cluttered environments and ensure good lighting.
                     </p>
                   </div>
                 </div>

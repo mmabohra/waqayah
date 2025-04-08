@@ -22,10 +22,10 @@ export default function WaqayahHero() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg flex items-center justify-center transition-colors duration-300">
-                Request Demo
+              <a href="#camera" className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-lg flex items-center justify-center transition-colors duration-300">
+                Try Now
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </button>
+              </a>
             </div>
           </div>
           
@@ -56,11 +56,11 @@ export default function WaqayahHero() {
               
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div className="bg-green-50 p-3 rounded-lg">
-                  <h3 className="font-medium text-green-800">99.2%</h3>
+                  <h3 className="font-medium text-green-800">86.2%</h3>
                   <p className="text-sm text-gray-600">Classification Accuracy</p>
                 </div>
                 <div className="bg-green-50 p-3 rounded-lg">
-                  <h3 className="font-medium text-green-800">0.5s</h3>
+                  <h3 className="font-medium text-green-800">0.2s</h3>
                   <p className="text-sm text-gray-600">Processing Time</p>
                 </div>
               </div>
