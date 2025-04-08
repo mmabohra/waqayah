@@ -23,23 +23,29 @@ const TeachableModel = ({ onResultsUpdate }) => {
         modelRef.current = model;
         console.log("Model loaded successfully");
 
-        // Setup webcam with back camera
+        // Define camera constraints for back camera
         const constraints = {
-          width: 640,
-          height: 480,
-          facingMode: 'environment' // Use back camera
+          video: {
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            facingMode: 'environment' // Explicitly request back camera
+          }
         };
-        const webcam = new tmImage.Webcam(
-          constraints.width,
-          constraints.height,
-          true, // flip
-          constraints
-        );
+
+        // Get media stream with back camera
+        console.log("Requesting back camera...");
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log("Media stream obtained:", stream.getVideoTracks()[0].label);
+
+        // Initialize Teachable Machine Webcam with the stream
+        const webcam = new tmImage.Webcam(640, 480, true); // flip = true
         webcamObjRef.current = webcam;
 
-        // Setup camera
-        await webcam.setup();
-        console.log("Webcam setup complete");
+        // Manually set the stream
+        await webcam.setup({ stream });
+        console.log("Webcam setup with stream complete");
+
+        // Start the webcam
         await webcam.play();
         console.log("Webcam started playing");
 
@@ -54,10 +60,10 @@ const TeachableModel = ({ onResultsUpdate }) => {
 
         setIsLoading(false);
 
-        // Define predict function inside useEffect
+        // Define and start prediction loop
         async function predict() {
           if (webcamObjRef.current) {
-            webcamObjRef.current.update();
+            webcamObjRef.current.update(); // Update the frame
           }
 
           frameCount.current = (frameCount.current + 1) % frameSkip;
@@ -80,7 +86,6 @@ const TeachableModel = ({ onResultsUpdate }) => {
           rafIdRef.current = requestAnimationFrame(predict);
         }
 
-        // Start prediction loop
         predict();
 
       } catch (err) {
@@ -108,7 +113,7 @@ const TeachableModel = ({ onResultsUpdate }) => {
         cancelAnimationFrame(rafIdRef.current);
       }
     };
-  }, [onResultsUpdate]); // Add onResultsUpdate to dependency array since it's used in predict
+  }, [onResultsUpdate]);
 
   return (
     <div className="w-full h-full bg-black relative">
@@ -126,10 +131,7 @@ const TeachableModel = ({ onResultsUpdate }) => {
           </div>
         </div>
       )}
-      <div 
-        ref={webcamRef} 
-        className="webcam-container w-full h-full"
-      />
+      <div ref={webcamRef} className="webcam-container w-full h-full" />
     </div>
   );
 };
