@@ -53,6 +53,34 @@ const TeachableModel = ({ onResultsUpdate }) => {
         }
 
         setIsLoading(false);
+
+        // Define predict function inside useEffect
+        async function predict() {
+          if (webcamObjRef.current) {
+            webcamObjRef.current.update();
+          }
+
+          frameCount.current = (frameCount.current + 1) % frameSkip;
+
+          if (frameCount.current === 0 && modelRef.current && webcamObjRef.current) {
+            try {
+              const predictions = await modelRef.current.predict(webcamObjRef.current.canvas);
+              if (onResultsUpdate) {
+                const formattedResults = predictions.map(p => ({
+                  className: p.className,
+                  probability: p.probability
+                }));
+                onResultsUpdate(formattedResults);
+              }
+            } catch (err) {
+              console.error("Prediction error:", err);
+            }
+          }
+
+          rafIdRef.current = requestAnimationFrame(predict);
+        }
+
+        // Start prediction loop
         predict();
 
       } catch (err) {
@@ -80,10 +108,7 @@ const TeachableModel = ({ onResultsUpdate }) => {
         cancelAnimationFrame(rafIdRef.current);
       }
     };
-  }, []);
-
-  // Rest of the code (predict function, return statement) remains unchanged
-  // ...
+  }, [onResultsUpdate]); // Add onResultsUpdate to dependency array since it's used in predict
 
   return (
     <div className="w-full h-full bg-black relative">
