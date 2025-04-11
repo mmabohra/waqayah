@@ -14,12 +14,11 @@ export default function Header() {
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
+
           <div className="flex items-center space-x-2">
             <img src="logo.png" alt="Logo" className="w-20" />
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <a
@@ -35,7 +34,6 @@ export default function Header() {
             </a>
           </nav>
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden text-gray-700"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -44,7 +42,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <nav className="flex flex-col space-y-4">

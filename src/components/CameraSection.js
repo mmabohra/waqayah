@@ -7,7 +7,6 @@ export default function CameraSection() {
   const [classificationResults, setClassificationResults] = useState([]);
   const [modelKey, setModelKey] = useState(Date.now());
 
-  // Handle continuous classification results from TeachableModel
   const handleClassificationResults = (results) => {
     if (results && results.length > 0) {
       setClassificationResults(results);
@@ -19,18 +18,15 @@ export default function CameraSection() {
   };
 
   const resetClassification = () => {
-    // Force a complete remount of the component
     setModelKey(Date.now());
     setClassificationResults([]);
   };
 
-  // Find the most probable class
   const topResult = classificationResults.length > 0 ? 
     classificationResults.reduce((prev, current) => 
       (prev.probability > current.probability) ? prev : current
     ) : null;
 
-  // Visual indicator based on confidence
   const getConfidenceIndicator = (probability) => {
     if (probability > 0.8) return { color: "text-green-600", bgColor: "bg-green-600" };
     if (probability > 0.5) return { color: "text-yellow-600", bgColor: "bg-yellow-600" };
@@ -70,7 +66,6 @@ export default function CameraSection() {
               </div>
             ) : (
               <div className="flex flex-col md:flex-row">
-                {/* Camera Feed */}
                 <div className="md:w-3/5 relative">
                   <div className="bg-black w-full aspect-video">
                     <TeachableModel 
@@ -85,7 +80,6 @@ export default function CameraSection() {
                   </div>
                 </div>
                 
-                {/* Live Results Panel */}
                 <div className="md:w-2/5 p-4 bg-gray-50 border-l">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-lg">Live Results</h3>

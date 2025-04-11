@@ -4,9 +4,9 @@ export default function WaqayahHero() {
   return (
     <div className="bg-gradient-to-br from-green-50 to-emerald-100">
       <div className="container mx-auto px-4 py-16 md:py-24">
-        {/* Main Hero Content */}
+        
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-          {/* Left Content - Text */}
+          
           <div className="lg:w-1/2 space-y-6">
             <div className="inline-flex items-center bg-green-100 px-3 py-1 rounded-full text-green-800 text-sm font-medium">
               <RecycleIcon className="h-4 w-4 mr-2" />
@@ -29,7 +29,6 @@ export default function WaqayahHero() {
             </div>
           </div>
           
-          {/* Right Content - Visualization */}
           <div className="lg:w-1/2 relative">
             <div className="bg-white p-6 rounded-xl shadow-xl">
               <div className="aspect-video bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg flex items-center justify-center overflow-hidden">
@@ -68,7 +67,6 @@ export default function WaqayahHero() {
           </div>
         </div>
         
-        {/* Info Section */}
         <div className="mt-12 bg-white rounded-xl p-6 shadow-lg">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Implementation Roadmap</h2>
           
